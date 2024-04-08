@@ -126,6 +126,7 @@ def filter_data_by_polygons(polygon_df, data):
     return [item for item in data if any(poly.contains(Point(item['geometry']['coordinates'])) for poly in polygon_df.geometry)]
 
 def get_frame_segments_data(filtered_data):
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    max_workers = 3  # Set a limit on the number of concurrent requests
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         frame_segments_data = list(executor.map(get_frame_segment_info, (item['properties']['id'] for item in filtered_data)))
     return frame_segments_data
